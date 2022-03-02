@@ -1,6 +1,11 @@
 # Certificate Chain Resolver
 
-Resolve SSL/TLS certificate chains with a simple to use interface.
+[![Latest Version](https://img.shields.io/github/release/stayallive/certificate-chain-resolver.svg?style=flat-square)](https://github.com/stayallive/certificate-chain-resolver/releases)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
+[![Build Status](https://img.shields.io/github/workflow/status/stayallive/certificate-chain-resolver/ci/master.svg?style=flat-square)](https://github.com/stayallive/certificate-chain-resolver/actions/workflows/ci.yaml)
+[![Total Downloads](https://img.shields.io/packagist/dt/stayallive/certificate-chain-resolver.svg?style=flat-square)](https://packagist.org/packages/stayallive/certificate-chain-resolver)
+
+Resolve a certificate chain with a simple to use interface.
 
 A hosted version using this package can be found here: https://cert.chief.app/chain.
 
@@ -33,11 +38,12 @@ $chain = new \Stayallive\CertificateChain\Resolver(
     \Stayallive\CertificateChain\Certificate::loadFromPathOrUrl('path/to/certificate.pem')
 );
 
-$chain->getCertificates(); // Array of certificates in the chain
-$chain->getCertificatesWithoutOriginal(); // Array of certificates in the chain without the original certificate the resolver was created with
+$chain->getContents(); // Same as `Resolver::fetchForCertificate`, returns a string
+$chain->getCertificates(); // Array of certificates in the chain, returns an array
 
-$chain->getContents(); // Same as `Resolver::fetchForCertificate`
-$chain->getContentsWithoutOriginal(); // Same as `Resolver::fetchForCertificate` or `getContents` but does not include the original certificate the resolver was created with
+// Versions that do not include the certificate that was used to construct the `Resolver` with
+$chain->getContentsWithoutOriginal();
+$chain->getCertificatesWithoutOriginal();
 ```
 
 There are 2 possible exception that can be thrown while retrieving the certificate or it's chain:
