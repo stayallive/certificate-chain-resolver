@@ -1,0 +1,47 @@
+{
+    "name": "stayallive/certificate-chain-resolver",
+    "type": "library",
+    "description": "Certificate chain resolver.",
+    "keywords": [
+        "https",
+        "certificate",
+        "certificate-chain"
+    ],
+    "homepage": "https://github.com/stayallive/certificate-chain-resolver",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alex Bouma",
+            "email": "alex@bouma.me"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "phpseclib/phpseclib": "^3.0.13"
+    },
+    "autoload": {
+        "psr-4": {
+            "Stayallive\\CertificateChain\\": "src/"
+        }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9.3",
+        "friendsofphp/php-cs-fixer": "3.6.*"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit --stop-on-failure",
+        "test:ci": "vendor/bin/phpunit",
+        "phpcs": "vendor/bin/php-cs-fixer fix",
+        "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff"
+    },
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist",
+        "optimize-autoloader": true
+    }
+}
