@@ -66,7 +66,7 @@ class CertifcateTest extends TestCase
         $certificate->fetchParentCertificate();
     }
 
-    /** @dataProvider certificateTypeProvider */
+    /** @dataProvider certificateFixtureProvider */
     public function testItCanParseACertificateAndFetchTheFullChain(string $fixture, int $chainLength, string $certFile = 'cert.pem', string $chainFile = 'chain.pem'): void
     {
         $inputFile = __DIR__ . "/fixtures/{$fixture}/{$certFile}";
@@ -79,7 +79,7 @@ class CertifcateTest extends TestCase
         $this->assertStringEqualsFile(__DIR__ . "/fixtures/{$fixture}/{$chainFile}", $chain->getContents());
     }
 
-    private function certificateTypeProvider(): array
+    public function certificateFixtureProvider(): array
     {
         return [
             'pem::dv-letsencrypt-certchief' => ['dv-letsencrypt-certchief', 3],
