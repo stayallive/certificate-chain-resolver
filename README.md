@@ -2,7 +2,7 @@
 
 [![Latest Version](https://img.shields.io/github/release/stayallive/certificate-chain-resolver.svg?style=flat-square)](https://github.com/stayallive/certificate-chain-resolver/releases)
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
-[![Build Status](https://img.shields.io/github/workflow/status/stayallive/certificate-chain-resolver/ci/master.svg?style=flat-square)](https://github.com/stayallive/certificate-chain-resolver/actions/workflows/ci.yaml)
+[![Build Status](https://img.shields.io/github/workflow/status/stayallive/certificate-chain-resolver/CI/master.svg?style=flat-square)](https://github.com/stayallive/certificate-chain-resolver/actions/workflows/ci.yaml)
 [![Total Downloads](https://img.shields.io/packagist/dt/stayallive/certificate-chain-resolver.svg?style=flat-square)](https://packagist.org/packages/stayallive/certificate-chain-resolver)
 
 Resolve a certificate chain with a simple to use interface.
