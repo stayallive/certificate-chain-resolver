@@ -18,7 +18,7 @@ class Certificate
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
      */
-    public static function loadFromPathOrUrl(string $pathOrUrl): static
+    public static function loadFromPathOrUrl(string $pathOrUrl): self
     {
         $contents = @file_get_contents($pathOrUrl);
 
@@ -26,7 +26,7 @@ class Certificate
             throw CouldNotLoadCertificate::cannotGetContents($pathOrUrl);
         }
 
-        return new static($contents);
+        return new self($contents);
     }
 
     /**
@@ -89,7 +89,7 @@ class Certificate
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
      */
-    public function fetchParentCertificate(): static
+    public function fetchParentCertificate(): self
     {
         $parentCertUrl = $this->getParentCertificateUrl();
 
@@ -97,7 +97,7 @@ class Certificate
             throw new RuntimeException('Cannot fetch parent certificate for certificate without parent.');
         }
 
-        return static::loadFromPathOrUrl($parentCertUrl);
+        return self::loadFromPathOrUrl($parentCertUrl);
     }
 
     public function getParentCertificateUrl(): ?string
@@ -117,8 +117,12 @@ class Certificate
 
     private function extractBerFromPem(string $pem): string
     {
+        $base64encoded = preg_replace('/(-----(BEGIN|END) ([A-Z0-9]+)-----)/', '', $pem);
+
+        assert($base64encoded !== null);
+
         return base64_decode(
-            str_replace("\n", '', trim(preg_replace('/(-----(BEGIN|END) ([A-Z0-9]+)-----)/', '', $pem)))
+            str_replace("\n", '', trim($base64encoded))
         );
     }
 

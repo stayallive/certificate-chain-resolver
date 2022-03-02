@@ -82,6 +82,7 @@ class ResolverTest extends TestCase
         $this->assertStringNotContainsString($certificate->getContents(), $chain->getContentsWithoutOriginal());
     }
 
+    /** @return array<string, array<int, mixed>> */
     public function certificateFixtureProvider(): array
     {
         return [

@@ -13,7 +13,7 @@ class Resolver
      */
     public static function fetchForCertificate(Certificate $certificate): string
     {
-        return (string)new static($certificate);
+        return (string)new self($certificate);
     }
 
     /**
@@ -56,6 +56,7 @@ class Resolver
         return array_slice($this->certificates, 1);
     }
 
+    /** @param array<int, \Stayallive\CertificateChain\Certificate> $certificates */
     private function formatAsChain(array $certificates): string
     {
         return implode('', array_map(static fn (Certificate $certificate) => (string)$certificate, $certificates));
