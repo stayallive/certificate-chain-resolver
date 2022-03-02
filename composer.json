@@ -38,7 +38,9 @@
         "test": "vendor/bin/phpunit --stop-on-failure",
         "test:ci": "vendor/bin/phpunit",
         "phpcs": "vendor/bin/php-cs-fixer fix",
-        "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff"
+        "phpcs:ci": "vendor/bin/php-cs-fixer fix --dry-run --diff",
+        "phpstan": "vendor/bin/phpstan analyse",
+        "phpstan:ci": "vendor/bin/phpstan analyse --error-format github"
     },
     "config": {
         "sort-packages": true,
