@@ -46,7 +46,8 @@ $chain->getContentsWithoutOriginal();
 $chain->getCertificatesWithoutOriginal();
 ```
 
-There are 2 possible exception that can be thrown while retrieving the certificate or it's chain:
+There are 2 possible exceptions that are thrown while retrieving the certificate or it's chain, they both extend `ResolverException`:
+
 - `CouldNotLoadCertificate` - this indicates fetching the certificate from an URL or path failed
 - `CouldNotParseCertificate` - this indicates parsing the fetched certificate failed because it's invalid or it's encoding is unsupported
 

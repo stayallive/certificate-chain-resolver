@@ -2,17 +2,15 @@
 
 namespace Stayallive\CertificateChain\Exceptions;
 
-use Exception;
-
-class CouldNotParseCertificate extends Exception
+final class CouldNotParseCertificate extends ResolverException
 {
-    public static function emptyContents(): static
+    public static function emptyContents(): self
     {
-        return new static('Could not create a certificate from a empty string.');
+        return new self('Could not create a certificate from a empty string.');
     }
 
-    public static function invalidContent(string $content): static
+    public static function invalidContent(string $content): self
     {
-        return new static("Could not create a certificate with content `{$content}`.");
+        return new self("Could not create a certificate with content `{$content}`.");
     }
 }

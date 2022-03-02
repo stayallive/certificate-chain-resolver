@@ -2,12 +2,10 @@
 
 namespace Stayallive\CertificateChain\Exceptions;
 
-use Exception;
-
-class CouldNotLoadCertificate extends Exception
+final class CouldNotLoadCertificate extends ResolverException
 {
     public static function cannotGetContents(string $path): self
     {
-        return new static("Could not create a certificate for path `{$path}`.");
+        return new self("Could not create a certificate for path `{$path}`.");
     }
 }
