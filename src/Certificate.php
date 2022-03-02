@@ -6,7 +6,7 @@ use RuntimeException;
 use phpseclib3\File\ASN1;
 use phpseclib3\File\X509;
 use Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate;
-use Stayallive\CertificateChain\Exceptions\CouldNotCreateCertificate;
+use Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate;
 
 class Certificate
 {
@@ -16,7 +16,7 @@ class Certificate
 
     /**
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate
-     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotCreateCertificate
+     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
      */
     public static function loadFromPathOrUrl(string $pathOrUrl): static
     {
@@ -30,12 +30,12 @@ class Certificate
     }
 
     /**
-     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotCreateCertificate
+     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
      */
     public function __construct(string $contents)
     {
         if (empty($contents)) {
-            throw CouldNotCreateCertificate::emptyContents();
+            throw CouldNotParseCertificate::emptyContents();
         }
 
         $original = null;
@@ -47,7 +47,7 @@ class Certificate
             );
 
             if ($converted === null) {
-                throw CouldNotCreateCertificate::invalidContent($contents);
+                throw CouldNotParseCertificate::invalidContent($contents);
             }
 
             $original = $contents;
@@ -64,7 +64,7 @@ class Certificate
         $this->parsedContents = $this->parser->loadX509($contents);
 
         if ($this->parsedContents === false) {
-            throw CouldNotCreateCertificate::invalidContent($original ?? $contents);
+            throw CouldNotParseCertificate::invalidContent($original ?? $contents);
         }
     }
 
@@ -86,8 +86,8 @@ class Certificate
     }
 
     /**
-     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotCreateCertificate
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate
+     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
      */
     public function fetchParentCertificate(): static
     {

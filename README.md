@@ -12,19 +12,37 @@ composer require stayallive/certificate-chain-resolver
 
 ## Usage
 
-You can use `CertificateChain::fetchForCertificate` to retrieve the full PEM encoded chain as a string.
+You can use `Resolver::fetchForCertificate` to retrieve the full PEM encoded chain as a string.
 
 ```php
-$output = Stayallive\CertificateChain\CertificateChain::fetchForCertificate(
-    Stayallive\CertificateChain\Certificate::loadFromPathOrUrl('path/to/certificate.pem')
-)
+$output = \Stayallive\CertificateChain\Resolver::fetchForCertificate(
+    \Stayallive\CertificateChain\Certificate::loadFromPathOrUrl('path/to/certificate.pem')
+);
 ```
 
-You can use `Certificate::loadFromPathOrUrl` to retrieve a `Certificate` instance you need for constructing a `CertificateChain` instance.
+You can use `Certificate::loadFromPathOrUrl` to retrieve a `Certificate` instance you need for constructing a `Resolver` instance.
 
 The certificate is fetched using `file_get_contents` so any path or URL that is supported by `file_get_contents` should work.
 
-The certificate can be in multiple formats and encodings, currently supported: PEM, DER and PKCS7.
+The `Certificate` can be in multiple formats and encodings, currently supported: PEM, DER and PKCS7, they are all normalized to PEM encoding.
+
+If you need the chain without the original certificate or want to get an array of `Certificate` instances representing the chain you can use the `Resolver` class directly:
+
+```php
+$chain = new \Stayallive\CertificateChain\Resolver(
+    \Stayallive\CertificateChain\Certificate::loadFromPathOrUrl('path/to/certificate.pem')
+);
+
+$chain->getCertificates(); // Array of certificates in the chain
+$chain->getCertificatesWithoutOriginal(); // Array of certificates in the chain without the original certificate the resolver was created with
+
+$chain->getContents(); // Same as `Resolver::fetchForCertificate`
+$chain->getContentsWithoutOriginal(); // Same as `Resolver::fetchForCertificate` or `getContents` but does not include the original certificate the resolver was created with
+```
+
+There are 2 possible exception that can be thrown while retrieving the certificate or it's chain:
+- `CouldNotLoadCertificate` - this indicates fetching the certificate from an URL or path failed
+- `CouldNotParseCertificate` - this indicates parsing the fetched certificate failed because it's invalid or it's encoding is unsupported
 
 ## Background: the trust chain
 

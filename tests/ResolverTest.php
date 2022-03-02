@@ -4,12 +4,12 @@ namespace Tests;
 
 use RuntimeException;
 use PHPUnit\Framework\TestCase;
+use Stayallive\CertificateChain\Resolver;
 use Stayallive\CertificateChain\Certificate;
-use Stayallive\CertificateChain\CertificateChain;
 use Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate;
-use Stayallive\CertificateChain\Exceptions\CouldNotCreateCertificate;
+use Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate;
 
-class CertifcateTest extends TestCase
+class ResolverTest extends TestCase
 {
     public function testItThrowsExceptionOnInvalidCertificatePath(): void
     {
@@ -23,7 +23,7 @@ class CertifcateTest extends TestCase
 
     public function testItThrowsExceptionOnEmptyCertificateContents(): void
     {
-        $this->expectException(CouldNotCreateCertificate::class);
+        $this->expectException(CouldNotParseCertificate::class);
         $this->expectExceptionMessage('Could not create a certificate from a empty string.');
 
         new Certificate('');
@@ -31,7 +31,7 @@ class CertifcateTest extends TestCase
 
     public function testItThrowsExceptionOnInvalidCertificateContents(): void
     {
-        $this->expectException(CouldNotCreateCertificate::class);
+        $this->expectException(CouldNotParseCertificate::class);
         $this->expectExceptionMessage('Could not create a certificate with content `invalid_content`.');
 
         new Certificate('invalid_content');
@@ -41,7 +41,7 @@ class CertifcateTest extends TestCase
     {
         $invalidContents = '-----BEGIN PKCS7-----invalid_contents-----END PKCS7-----';
 
-        $this->expectException(CouldNotCreateCertificate::class);
+        $this->expectException(CouldNotParseCertificate::class);
         $this->expectExceptionMessage("Could not create a certificate with content `{$invalidContents}`.");
 
         new Certificate($invalidContents);
@@ -49,7 +49,7 @@ class CertifcateTest extends TestCase
 
     public function testStaticHelperReturnsFullCertificateChainAsPemEncodedString(): void
     {
-        $chainContents = CertificateChain::fetchForCertificate(
+        $chainContents = Resolver::fetchForCertificate(
             Certificate::loadFromPathOrUrl(__DIR__ . '/fixtures/self-signed/cert.pem')
         );
 
@@ -71,12 +71,15 @@ class CertifcateTest extends TestCase
     {
         $inputFile = __DIR__ . "/fixtures/{$fixture}/{$certFile}";
 
-        $chain = new CertificateChain(
-            Certificate::loadFromPathOrUrl($inputFile)
+        $chain = new Resolver(
+            $certificate = Certificate::loadFromPathOrUrl($inputFile)
         );
 
         $this->assertCount($chainLength, $chain->getCertificates());
+        $this->assertCount($chainLength - 1, $chain->getCertificatesWithoutOriginal());
+
         $this->assertStringEqualsFile(__DIR__ . "/fixtures/{$fixture}/{$chainFile}", $chain->getContents());
+        $this->assertStringNotContainsString($certificate->getContents(), $chain->getContentsWithoutOriginal());
     }
 
     public function certificateFixtureProvider(): array

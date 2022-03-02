@@ -2,14 +2,14 @@
 
 namespace Stayallive\CertificateChain;
 
-class CertificateChain
+class Resolver
 {
     /** @var array<int, \Stayallive\CertificateChain\Certificate> */
-    protected array $certificates;
+    private array $certificates;
 
     /**
-     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotCreateCertificate
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate
+     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
      */
     public static function fetchForCertificate(Certificate $certificate): string
     {
@@ -17,12 +17,11 @@ class CertificateChain
     }
 
     /**
-     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotCreateCertificate
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate
+     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
      */
-    public function __construct(
-        Certificate $certificate
-    ) {
+    public function __construct(Certificate $certificate)
+    {
         $this->certificates = [$certificate];
 
         while (($lastCertificate = end($this->certificates)) && $lastCertificate->hasParentInTrustChain()) {
@@ -37,12 +36,28 @@ class CertificateChain
 
     public function getContents(): string
     {
-        return implode('', array_map(static fn (Certificate $certificate) => (string)$certificate, $this->certificates));
+        return $this->formatAsChain($this->getCertificates());
+    }
+
+    public function getContentsWithoutOriginal(): string
+    {
+        return $this->formatAsChain($this->getCertificatesWithoutOriginal());
     }
 
     /** @return array<int, \Stayallive\CertificateChain\Certificate> */
     public function getCertificates(): array
     {
         return $this->certificates;
+    }
+
+    /** @return array<int, \Stayallive\CertificateChain\Certificate> */
+    public function getCertificatesWithoutOriginal(): array
+    {
+        return array_slice($this->certificates, 1);
+    }
+
+    private function formatAsChain(array $certificates): string
+    {
+        return implode('', array_map(static fn (Certificate $certificate) => (string)$certificate, $certificates));
     }
 }

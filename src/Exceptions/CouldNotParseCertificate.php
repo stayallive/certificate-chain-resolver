@@ -4,7 +4,7 @@ namespace Stayallive\CertificateChain\Exceptions;
 
 use Exception;
 
-class CouldNotCreateCertificate extends Exception
+class CouldNotParseCertificate extends Exception
 {
     public static function emptyContents(): static
     {
