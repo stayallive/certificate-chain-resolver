@@ -102,7 +102,9 @@ class Certificate
 
     public function getParentCertificateUrl(): ?string
     {
-        foreach ($this->parsedContents['tbsCertificate']['extensions'] as $extension) {
+        $extensions = $this->parsedContents['tbsCertificate']['extensions'] ?? [];
+
+        foreach ($extensions as $extension) {
             if ($extension['extnId'] === 'id-pe-authorityInfoAccess') {
                 foreach ($extension['extnValue'] as $extnValue) {
                     if ($extnValue['accessMethod'] === 'id-ad-caIssuers') {
