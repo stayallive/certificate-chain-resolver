@@ -50,7 +50,7 @@ class ResolverTest extends TestCase
     public function testStaticHelperReturnsFullCertificateChainAsPemEncodedString(): void
     {
         $chainContents = Resolver::fetchForCertificate(
-            Certificate::loadFromPathOrUrl(__DIR__ . '/fixtures/self-signed/cert.pem')
+            Certificate::loadFromPathOrUrl(__DIR__ . '/fixtures/self-signed/cert.pem'),
         );
 
         $this->assertStringEqualsFile(__DIR__ . '/fixtures/self-signed/chain.pem', $chainContents);
@@ -72,7 +72,7 @@ class ResolverTest extends TestCase
         $inputFile = __DIR__ . "/fixtures/{$fixture}/{$certFile}";
 
         $chain = new Resolver(
-            $certificate = Certificate::loadFromPathOrUrl($inputFile)
+            $certificate = Certificate::loadFromPathOrUrl($inputFile),
         );
 
         $this->assertCount($chainLength, $chain->getCertificates());

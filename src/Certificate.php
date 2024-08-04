@@ -43,7 +43,7 @@ class Certificate
         // If we are missing the pem certificate header, try to convert it to a PEM formatted string first
         if (str_starts_with($contents, '-----BEGIN PKCS7-----')) {
             $converted = $this->convertPkcs7EncodedBerToPem(
-                $this->extractBerFromPem($contents)
+                $this->extractBerFromPem($contents),
             );
 
             if ($converted === null) {
@@ -76,7 +76,7 @@ class Certificate
     public function getContents(): string
     {
         return $this->convertDerEncodedToPem(
-            $this->parser->saveX509($this->parsedContents, X509::FORMAT_DER)
+            $this->parser->saveX509($this->parsedContents, X509::FORMAT_DER),
         );
     }
 
@@ -124,7 +124,7 @@ class Certificate
         assert($base64encoded !== null);
 
         return base64_decode(
-            str_replace("\n", '', trim($base64encoded))
+            str_replace("\n", '', trim($base64encoded)),
         );
     }
 
