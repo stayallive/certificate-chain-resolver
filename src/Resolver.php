@@ -24,7 +24,7 @@ class Resolver
     {
         $this->certificates = [$certificate];
 
-        while (($lastCertificate = end($this->certificates)) && $lastCertificate->hasParentInTrustChain()) {
+        while (($lastCertificate = end($this->certificates))->hasParentInTrustChain()) {
             $this->certificates[] = $lastCertificate->fetchParentCertificate();
         }
     }
