@@ -7,7 +7,7 @@
 
 Resolve a certificate chain with a simple to use interface.
 
-A hosted version using this package can be found here: https://cert.chief.app/chain.
+A hosted version using this package can be found here: [chief.tools/certificate-chain-resolver](https://chief.tools/certificate-chain-resolver?ref=github).
 
 ## Installation
 
