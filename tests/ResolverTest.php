@@ -6,7 +6,6 @@ use RuntimeException;
 use PHPUnit\Framework\TestCase;
 use Stayallive\CertificateChain\Resolver;
 use Stayallive\CertificateChain\Certificate;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate;
 use Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate;
 
@@ -67,7 +66,7 @@ class ResolverTest extends TestCase
         $certificate->fetchParentCertificate();
     }
 
-    #[DataProvider('certificateFixtureProvider')]
+    /** @dataProvider certificateFixtureProvider */
     public function testItCanParseACertificateAndFetchTheFullChain(string $fixture, int $chainLength, string $certFile = 'cert.pem', string $chainFile = 'chain.pem'): void
     {
         $inputFile = __DIR__ . "/fixtures/{$fixture}/{$certFile}";
