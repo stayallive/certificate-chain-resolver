@@ -87,7 +87,7 @@ class ResolverTest extends TestCase
     {
         return [
             'pem::dv-letsencrypt-certchief' => ['dv-letsencrypt-certchief', 3],
-            'pem::dv-thawte-google'         => ['dv-thawte-google', 2],
+            'pem::dv-googletrust-google'    => ['dv-googletrust-google', 3],
             'pem::ev-sectigo-coolblue'      => ['ev-sectigo-coolblue', 3],
             'pem::self-signed'              => ['self-signed', 1],
             'der::self-signed'              => ['self-signed', 1, 'cert.der'],
