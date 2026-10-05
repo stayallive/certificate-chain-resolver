@@ -3,16 +3,20 @@
 namespace Stayallive\CertificateChain;
 
 use RuntimeException;
-use phpseclib3\File\ASN1;
-use phpseclib3\File\X509;
+use phpseclib4\File\CMS;
+use phpseclib4\File\ASN1;
+use phpseclib4\File\X509;
+use phpseclib4\File\CMS\SignedData;
+use phpseclib4\Exception\BaseException;
 use Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate;
 use Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate;
 
 class Certificate
 {
-    private X509 $parser;
+    private X509 $certificate;
 
-    private mixed $parsedContents;
+    /** @var array<string, mixed> */
+    private array $parsedContents;
 
     /**
      * @throws \Stayallive\CertificateChain\Exceptions\CouldNotLoadCertificate
@@ -29,9 +33,7 @@ class Certificate
         return new self($contents);
     }
 
-    /**
-     * @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate
-     */
+    /** @throws \Stayallive\CertificateChain\Exceptions\CouldNotParseCertificate */
     public function __construct(string $contents)
     {
         if (empty($contents)) {
@@ -59,11 +61,10 @@ class Certificate
             $contents = $this->convertPkcs7EncodedBerToPem($contents) ?? $this->convertDerEncodedToPem($contents);
         }
 
-        $this->parser = new X509;
-
-        $this->parsedContents = $this->parser->loadX509($contents);
-
-        if ($this->parsedContents === false) {
+        try {
+            $this->certificate    = X509::load($contents);
+            $this->parsedContents = $this->certificate->toArray(true);
+        } catch (BaseException) {
             throw CouldNotParseCertificate::invalidContent($original ?? $contents);
         }
     }
@@ -76,7 +77,7 @@ class Certificate
     public function getContents(): string
     {
         return $this->convertDerEncodedToPem(
-            $this->parser->saveX509($this->parsedContents, X509::FORMAT_DER),
+            $this->certificate->toString(['binary' => true]),
         );
     }
 
@@ -137,38 +138,24 @@ class Certificate
 
     private function convertPkcs7EncodedBerToPem(string $pkcs7): ?string
     {
-        $decoded = ASN1::decodeBER($pkcs7);
-        $data    = $decoded[0]['content'] ?? [];
-
-        // Make sure we are dealing with actual data
-        if (empty($data) || is_string($data)) {
+        try {
+            $signedData = CMS::load($pkcs7, ASN1::FORMAT_DER);
+        } catch (BaseException) {
             return null;
         }
 
         // Make sure this is an PKCS#7 signedData object
-        if ($data[0]['type'] === ASN1::TYPE_OBJECT_IDENTIFIER && $data[0]['content'] === '1.2.840.113549.1.7.2') {
-            // Loop over all the content in the signedData object
-            foreach ($data[1]['content'] as $pkcs7SignedData) {
-                // Find all sequences of data
-                if ($pkcs7SignedData['type'] === ASN1::TYPE_SEQUENCE) {
-                    // Extract the sequence identifier if possible
-                    $identifier = $pkcs7SignedData['content'][2] ?? '';
-
-                    // Make sure the sequence is a PKCS#7 data object we are dealing with
-                    if ($identifier['type'] === ASN1::TYPE_SEQUENCE && $identifier['content'][0]['content'] === '1.2.840.113549.1.7.1') {
-                        // Extract the certificate data
-                        $certificate = $pkcs7SignedData['content'][3];
-
-                        // Extract the raw certificate data from the PKCS#7 string
-                        $rawCert = substr($pkcs7, $certificate['start'] + $certificate['headerlength'], $certificate['length'] - $certificate['headerlength']);
-
-                        // Return the PEM encoded certificate
-                        return $this->convertDerEncodedToPem($rawCert);
-                    }
-                }
-            }
+        if (!$signedData instanceof SignedData) {
+            return null;
         }
 
-        return null;
+        $certificate = $signedData->getCertificates()[0] ?? null;
+
+        if (!$certificate instanceof X509) {
+            return null;
+        }
+
+        // Return the PEM encoded certificate
+        return $this->convertDerEncodedToPem($certificate->toString(['binary' => true]));
     }
 }
